@@ -1,8 +1,6 @@
 import * as z from "zod"
 
-
-
-const CandidateSchema = z.object({
+export const CandidateSchema = z.object({
     id:z.string().optional(),
     name:z.string().min(6,{message:"Le nom doit contenir au moins 6 charactères."}),
     cin:z.string().min(3,{message:"Merci de renseigner le numèro de la cin. "}),
@@ -40,6 +38,45 @@ export const ChargeSchema = z.object({
     id:z.string().optional(),
     libelle:z.string().min(4,{message:"Merci de rensigner le libellé de la charge."}),
     montant:z.number().positive({message:"Merci d'entrer un montant plus que zéro."}),
-    nature:z.string().min(4,{message:"Merci de rensigner la nature de la charge."})
+    nature:z.string().min(4,{message:"Merci de rensigner la nature de la charge."}),
+    recurente:z.boolean().default(false),
+    date:z.date().default(new Date()),
+    dateEchence:z.date().optional()
 
+}).superRefine((data,ctx)=>{
+    if(data.recurente){
+        if(!data.dateEchence){
+            ctx.addIssue({
+                code:"custom",
+                path:["dateEcheance"],
+                message:"Merci de rensigner la date de l'écheance récurrente."
+            })
+        }
+    }
 })
+
+export type ChargeType  = z.infer<typeof ChargeSchema>
+
+export const PersonnelSchema =z.object({
+    id:z.string().optional(),
+    name:z.string().min(4,{message:"Merci de renseigner le nom."}),
+    auto:z.string().min(1,{message:"Merci d'affecter à une auto école."}),
+    salaire:z.number().positive({message:"Le salaire doit être plus que zéro."})
+})
+
+export type PersonnelType = z.infer<typeof PersonnelSchema>
+
+
+export const AdminSchema = z.object({
+    unsername:z.string().min(4,{message:"Merci de renseigner le nom d'utilisateur."}),
+    passowrd:z.string().min(8,{message:"Merci de rensigner le mot de pass"})
+})
+export type AdminType =z.infer<typeof AdminSchema>
+
+
+
+export type ActionResponseType<T> = {
+    status:"success" | "failure",
+    message?:string,
+    data?:T
+}
