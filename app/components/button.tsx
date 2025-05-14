@@ -1,9 +1,10 @@
+import React from "react"
 
 
 
 interface ButtonProps {
     style:string,
-    action:()=>void,
+    action?:(e:React.MouseEvent<HTMLButtonElement>)=>Promise<void>,
     text:string,
     attrs?:Record<string,boolean | string>
 }

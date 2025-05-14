@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@tanstack/react-query": "4",
+    "bcryptjs": "^3.0.2",
     "mongodb": "^6.16.0",
     "next": "15.3.2",
     "next-auth": "^5.0.0-beta.28",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-toastify": "^11.0.5",
     "zod": "^3.24.4"
   },
   "devDependencies": {
