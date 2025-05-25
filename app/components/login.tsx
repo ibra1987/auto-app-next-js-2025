@@ -51,7 +51,7 @@ const inputStyle = " p-2 border border-gray-300 rounded w-full"
        if (!res || res.error || !res.ok) {
            throw new Error("Nom d'utilisateur ou mot de passe incorrect.");
        }else {
-        router.push("/dashboard")
+        router.push("/in")
        }
 
       

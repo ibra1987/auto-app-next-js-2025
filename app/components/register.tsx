@@ -110,7 +110,7 @@ const RegisterComponent = () => {
           {errors.generic}
         </div>
       )}
-      <h1 className="my-10 text-2xl font-bold">Veuillez vous connecter</h1>
+      <h1 className="my-10 text-2xl font-bold">Ajouter un nouveau utilisateur</h1>
       <form onSubmit={handleSubmit} className="w-full gap-2 flex flex-col justify-center items-center">
         <input
           onChange={changeHandler}

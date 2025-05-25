@@ -10,5 +10,5 @@ import { ToastContainer } from 'react-toastify';
 export function ReactQueryProvider({ children }: { children: ReactNode }) {
   const [client] = useState(() => new QueryClient());
 
-  return <QueryClientProvider client={client}>{children} <ToastContainer /></QueryClientProvider>;
+  return <QueryClientProvider client={client}>{children} <ToastContainer position="top-center" /></QueryClientProvider>;
 }
