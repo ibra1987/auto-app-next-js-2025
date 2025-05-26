@@ -1,26 +1,23 @@
 
-import { ActionResponseType, CandidateSchema, CandidateType } from "@/types"
+import { inputValidtor } from "@/lib/utils"
+import { ActionResponseType, AutoecoleSchema, CandidatSchema, CandidatType, } from "@/types"
 import * as z from "zod"
 
 
 // GET /api/candidats @params autoId string
-export async function  getCandidats(autoId:string):Promise<ActionResponseType<CandidateType[] | z.ZodIssue[]>>{
+export async function  getCandidats(auto:string):Promise<ActionResponseType<CandidatType[] | string>>{
    try {
-    const validationResult =  z.string().min(4).safeParse(autoId)
-    if(!validationResult.success){
-        return {
-            status:"failure",
-            message:"Invalid request",
-            data:validationResult.error.errors
-        }
+    const errors = inputValidtor(auto as unknown as typeof AutoecoleSchema,AutoecoleSchema)
+    if(errors){
+        throw new Error("Merci de spécifier l'auto ècole")
     }
-    const response = await fetch("/api/candidats",{
+    const response = await fetch(`/api/candidats/${auto}`,{
         method:"GET",
         headers:{
             "Content-Type":"application/json",
 
         },
-        body:JSON.stringify({autoId})
+       
     })
     if(!response.ok){
         return {
@@ -40,11 +37,11 @@ export async function  getCandidats(autoId:string):Promise<ActionResponseType<Ca
 
 
 // POST /api/Candidats @param candidat CandidatType
-export async function  addCandidat(candidat:CandidateType):Promise<ActionResponseType<z.ZodIssue[] | string>>{
+export async function  addCandidat(candidat:CandidatType):Promise<ActionResponseType<z.ZodIssue[] | string>>{
    try {
-    const validationResult =  CandidateSchema.safeParse(candidat)
-    if(!validationResult.success){
-       const errors = validationResult.error.errors
+    const errors =  inputValidtor(candidat,CandidatSchema)
+    if(errors){
+      
        return {
             status:"failure",
             message:"There was an error with you request.",
@@ -67,9 +64,6 @@ export async function  addCandidat(candidat:CandidateType):Promise<ActionRespons
     }
      return await response.json()
    } catch (error) {
-       return {
-        status:"failure",
-        message:`${error && typeof error === "object" && "message" in error ? error.message  : "Server error"}`
-       }
+       return error as ActionResponseType<z.ZodIssue[] | string>
    }
 }

@@ -4,9 +4,9 @@ import React from "react"
 
 interface ButtonProps {
     style:string,
-    action?:(e:React.MouseEvent<HTMLButtonElement>)=>Promise<void>,
+    action?:(e:React.MouseEvent<HTMLButtonElement> | null)=>Promise<void> | void,
     text:string,
-    attrs?:Record<string,boolean | string>
+    attrs?:Record<string ,any>
 }
 const Button = ({style,action,attrs,text}:ButtonProps) => {
   return (

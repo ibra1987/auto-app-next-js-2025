@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryProvider } from "@/providers/react-query-provider";
+import Sidebar from "./components/side-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
     <ReactQueryProvider >
-          {children}
+      <div className="w-full min-h-screen flex justify-center items-start">
+          <Sidebar/>
+         <div className="w-full flex-grow flex flex-col justify-start items-start">
+             {children}
+         </div>
+      </div>
     </ReactQueryProvider>
       </body>
     </html>

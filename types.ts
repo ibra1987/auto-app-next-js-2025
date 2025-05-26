@@ -1,28 +1,41 @@
 import * as z from "zod";
 
-export const CandidateSchema = z.object({
-  id: z.string().optional(),
-  name: z
+export const AutoecoleSchema = z.enum(["Akka","Zguid","Tata"])
+export type AutoecoleType = z.infer<typeof AutoecoleSchema>
+export const AdresseSchema = z.enum(["Tata", "Issafen", "Tagmout", "Tigzmirte", "Adiss", "Tissint", "Foum zguid", "Akka", "Fam el hisn", "Tamanarte"])
+export const CategorieSchema = z.enum(["A","B","C","D","E"])
+
+export const CandidatSchema = z.object({
+  _id: z.string().optional(),
+  auto: AutoecoleSchema.refine(
+    (val) => AutoecoleSchema.options.includes(val),
+    { message: "Veuillez saisir une auto ecole valide." }),
+  nom: z
     .string()
     .min(6, { message: "Le nom doit contenir au moins 6 charactères." }),
   cin: z
     .string()
     .min(3, { message: "Merci de renseigner le numèro de la cin. " }),
-  adresse: z
+adresse: AdresseSchema.refine(
+    (val) => AdresseSchema.options.includes(val),
+    { message: "Veuillez saisir une adresse valide." }),
+  
+    tel: z
     .string()
-    .min(3, { message: "Merci de rensigner l'adresse du candidat." }),
-  categorie: z
-    .string()
-    .max(2, { message: "Merci de rensigner la catégorie demandée." }),
-  price: z
+    .optional(),
+  categorie: CategorieSchema.refine(
+    (val) => CategorieSchema.options.includes(val),
+    { message: "Veuillez saisir une catégorie valide." }),
+  
+  prix: z
     .number()
-    .positive({ message: "Merci de renseigner le prix de la préstation." }),
+    .positive({ message: "Merci de renseigner le prix de la préstation." }).default(0),
 });
 
-export type CandidateType = z.infer<typeof CandidateSchema>;
+export type CandidatType = z.infer<typeof CandidatSchema>;
 
 export const TranchesSchema = z.object({
-  id: z.string().optional(),
+  _id: z.string().optional(),
   candidatId: z.string({ required_error: "aucun candidat seléctionné." }),
   montant: z
     .number()

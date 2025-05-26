@@ -1,12 +1,13 @@
 import { DB_COLLECTIONS } from "@/app.config"
-import { requireDb } from "@/db/config"
+import { dbClient } from "@/db/config"
 import { comparePassword } from "@/lib/serverhelpers"
 import { inputValidtor } from "@/lib/utils"
 import { AdminSchema, AdminType } from "@/types"
-import { WithId } from "mongodb"
+import { MongoClient, WithId } from "mongodb"
 import { NextResponse } from "next/server"
 import { ZodIssue } from "zod"
 
+let client: MongoClient | null = null;
 
 
 export async function POST(req:Request){
@@ -18,9 +19,12 @@ export async function POST(req:Request){
         if(errors){
             throw new Error(JSON.stringify(errors))
         }
-        const db = await requireDb()
+       client = await dbClient()
+           if(!client) throw new Error("Database connection failed")
+            await client.connect()
+
     
-        const isAdmin = await db.collection(DB_COLLECTIONS.ADMINS).findOne<WithId<AdminType>>({username:adminCreds.username})
+        const isAdmin = await client.db("autodb").collection(DB_COLLECTIONS.ADMINS).findOne<WithId<AdminType>>({username:adminCreds.username})
         if(!isAdmin || !isAdmin._id){
             throw new Error(JSON.stringify([{code:"custom",message:"Invalid credentials",path:["generic"]}]))
         }
@@ -37,5 +41,7 @@ export async function POST(req:Request){
                 status:"failure",
                 data:error.message as ZodIssue[]
             },{status:500})
-    }
+    }finally{
+           await client?.close()
+        }
 }
