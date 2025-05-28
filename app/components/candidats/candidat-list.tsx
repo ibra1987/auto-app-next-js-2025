@@ -6,8 +6,8 @@ import { CandidatType } from "@/types";
 import { useAutoStore } from "@/state";
 import { toast } from "react-toastify";
 import { Settings, X } from "lucide-react";
-import { useMemo, useState } from "react";
-import AddCandidat from "./add-candidat";
+import { 
+  useState } from "react";
 import CandidatSettings from "./candidat-settings";
 
 const CandidatList = () => {
@@ -55,7 +55,7 @@ const CandidatList = () => {
         {showEditPannel && selectedCandidat && (
 
                 <div className="w-full flex justify-center items-center min-h-screen fixed top-0 left-0 bg-black/50">
-                    <span onClick={()=>setEditPannel(false)} className="absolute top-1/6 z-10 right-1/5 text-red-500 p-1 rounded-md border border-gray-300s hover:bg-red-500 hover:text-white">
+                    <span onClick={()=>setEditPannel(false)} className="absolute top-4 z-10 right-1/5 text-red-500 p-1 rounded-md border border-gray-300s hover:bg-red-500 hover:text-white">
                     <X />
                         </span>
                     <CandidatSettings selectedCandidat={selectedCandidat as CandidatType}/>
@@ -96,7 +96,27 @@ const CandidatList = () => {
                 <td className="px-4 text-center py-3">{candidat.tel || "—"}</td>
                 <td className="px-4 text-center py-3">{candidat.categorie}</td>
                 <td className="px-4 text-center py-3">{candidat.prix} DH</td>
-                 <td className="px-4 text-center py-3">{1000} DH</td>
+                 <td className="px-4 text-center py-3">
+  <div className="flex flex-col items-center gap-1">
+   {candidat.prix !== parseFloat(candidat.totalPaye ?? "0") ? (
+  <span>
+    -{(candidat.prix - parseFloat(candidat.totalPaye ?? "0")).toFixed(2)} DH restant
+  </span>
+) : null}
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-semibold 
+        ${candidat.prix > parseFloat(candidat.totalPaye ?? "0")
+          ? "bg-red-600 text-white"
+          : candidat.prix === parseFloat(candidat.totalPaye ?? "0") 
+          ? "bg-green-600 text-white"
+          : "bg-gray-200 text-gray-800"}
+      `}
+    >
+      {candidat.totalPaye} DH payé
+    </span>
+  </div>
+</td>
+
                  <td className="px-4 flex justify-center py-3"> <Settings onClick={()=>showCandidatPannel(candidat._id as string)} size={14} className="cursor-pointer hover:text-black hover:scale-110"/> </td>
 
               </tr>

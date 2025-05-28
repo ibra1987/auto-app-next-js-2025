@@ -17,7 +17,30 @@ export async function GET(req:NextRequest,{params}:{params:Promise<{auto:string}
     client = await dbClient()
     if(!client) throw new Error("Erreur de connexion à la base de données.")
     await client.connect()
-     const dbQueryResult = await client.db("autodb").collection("candidats").find({auto}).toArray()
+     const dbQueryResult = await client.db("autodb").collection("candidats").aggregate([
+   
+    // { $sort: { createdAt: -1 } },
+    // { $skip: skip },
+    // { $limit: limit },
+      {
+      $match: {
+        auto: auto // si tu filtres par auto
+      }
+    },
+    {
+      $lookup: {
+        from: "paiements",
+        localField: "_id",
+        foreignField: "candidatId",
+        as: "paiements"
+      }
+    },
+    {
+      $addFields: {
+        totalPaye: { $sum: "$paiements.montant" }
+      }
+    }
+  ]).toArray()
      if(!dbQueryResult || !dbQueryResult.length){
         throw new Error("Aucun enregistrement")
      }

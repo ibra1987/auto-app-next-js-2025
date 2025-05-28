@@ -1,5 +1,5 @@
 "use client"
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import Button from "../../components/button";
 import AddCandidat from "../../components/candidats/add-candidat";
 import { useState } from "react";
@@ -14,7 +14,7 @@ const [showAddCandidatModal,setAddCandidatModal]=useState(false)
     return (
         <div className="w-full flex flex-col gap-6 justify-start items-center p-4 ">
             <div className="relative w-full flex justify-end items-center bg-gray- rounded-md border border-gray-200 p-4 ">
-               <Button action={()=>setAddCandidatModal(true)} text="Ajouter un candidat" style="px-6 py-2 bg-black text-white cursor-pointer hover:text-gray-300 rounded-md"/>
+               <Button action={()=>setAddCandidatModal(true)} text={<span className="flex gap-2"><Plus/> Nouveau Candidat</span>} style="px-6 py-2 bg-black text-white cursor-pointer hover:text-gray-300 rounded-md"/>
                
             </div>
             {/**MODAL */}

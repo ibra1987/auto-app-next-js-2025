@@ -86,7 +86,7 @@ const resetForm = () => {
     return
    }
      mutate(newCandidat as CandidatType)
-     queryClient.invalidateQueries({ queryKey: ["liste-candidats", auto] });
+    await queryClient.invalidateQueries({ queryKey: ["liste-candidats", auto] });
     
   }
   return (

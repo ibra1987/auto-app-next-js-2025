@@ -1,6 +1,6 @@
 
 import { inputValidtor } from "@/lib/utils"
-import { ActionResponseType, AutoecoleSchema, CandidatSchema, CandidatType, } from "@/types"
+import { ActionResponseType, AutoecoleSchema, CandidatSchema, CandidatType, TranchesSchema, TrancheType, } from "@/types"
 import * as z from "zod"
 
 
@@ -11,7 +11,7 @@ export async function  getCandidats(auto:string):Promise<ActionResponseType<Cand
     if(errors){
         throw new Error("Merci de spécifier l'auto ècole")
     }
-    const response = await fetch(`/api/candidats/${auto}`,{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/candidats/${auto}`,{
         method:"GET",
         headers:{
             "Content-Type":"application/json",
@@ -48,7 +48,7 @@ export async function  addCandidat(candidat:CandidatType):Promise<ActionResponse
             data:errors
        }
     }
-    const response = await fetch("/api/candidats",{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/candidats`,{
         method:"POST",
         headers:{
             "Content-Type":"application/json",
@@ -78,7 +78,7 @@ export async function  getCandidat(auto:string,id:string):Promise<ActionResponse
         console.log(errors, id)
         throw new Error("Merci de spécifier l'auto ècole et l'id du candidat.")
     }
-    const response = await fetch(`/api/candidats/${auto}/${id}`,{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/candidats/${auto}/${id}`,{
         method:"GET",
         headers:{
             "Content-Type":"application/json",
@@ -116,7 +116,7 @@ export async function  editCandidat(candidat:CandidatType):Promise<ActionRespons
             data:errors
        }
     }
-    const response = await fetch("/api/candidats",{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/candidats`,{
         method:"PUT",
         headers:{
             "Content-Type":"application/json",
@@ -135,4 +135,5 @@ export async function  editCandidat(candidat:CandidatType):Promise<ActionRespons
        return error as ActionResponseType<z.ZodIssue[] | string>
    }
 }
+
 

@@ -5,6 +5,24 @@ export type AutoecoleType = z.infer<typeof AutoecoleSchema>
 export const AdresseSchema = z.enum(["Tata", "Issafen", "Tagmout", "Tigzmirte", "Adiss", "Tissint", "Foum zguid", "Akka", "Fam el hisn", "Tamanarte"])
 export const CategorieSchema = z.enum(["A","B","C","D","E"])
 
+export const TranchesSchema = z.object({
+  _id: z.string().optional(),
+  candidatId: z.string({ required_error: "aucun candidat seléctionné." }),
+  montant: z
+    .number()
+    .positive({ message: "Merci d'entrer un montant plus que zéro." }),
+  date:z.preprocess(
+    (arg) => {
+      if (typeof arg === "string" || arg instanceof Date) {
+        const date = new Date(arg);
+        return isNaN(date.getTime()) ? undefined : date;
+      }
+      return arg;
+    },
+    z.date({ required_error: "La date est requise" })
+  ),
+
+})
 export const CandidatSchema = z.object({
   _id: z.string().optional(),
   auto: AutoecoleSchema.refine(
@@ -28,19 +46,15 @@ adresse: AdresseSchema.refine(
     { message: "Veuillez saisir une catégorie valide." }),
   
   prix: z
-    .number()
-    .positive({ message: "Merci de renseigner le prix de la préstation." }).default(0),
+  
+    .number({ message: "Merci de renseigner le prix de la préstation." }).default(0),
+    paiements:z.array(TranchesSchema).optional(),
+    totalPaye:z.string().optional()
 });
 
 export type CandidatType = z.infer<typeof CandidatSchema>;
 
-export const TranchesSchema = z.object({
-  _id: z.string().optional(),
-  candidatId: z.string({ required_error: "aucun candidat seléctionné." }),
-  montant: z
-    .number()
-    .positive({ message: "Merci d'entrer un montant plus que zéro." }),
-});
+
 
 export type TrancheType = z.infer<typeof TranchesSchema>;
 

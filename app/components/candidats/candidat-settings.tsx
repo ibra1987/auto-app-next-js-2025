@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import InfoCandidat from "./info-candidat";
 import { CandidatType } from "@/types";
 import { Contact, HandCoins } from "lucide-react";
+import AddPaiment from "../paiements/add-paiement";
 
 const CandidatSettings = ({selectedCandidat}:{selectedCandidat:CandidatType}) => {
   const [selectedTab, setSelectedTab] = useState("info-candidat");
@@ -20,6 +21,7 @@ const CandidatSettings = ({selectedCandidat}:{selectedCandidat:CandidatType}) =>
     }
   }, [selectedTab]);
 
+  
   return (
     <div className="w-full max-w-4xl h-screen mx-auto bg-white p-6 rounded-xl ">
       <div className="flex justify-start gap-4 items-center mb-4 border-b border-b-gray-200 pb-2">
@@ -53,7 +55,7 @@ const CandidatSettings = ({selectedCandidat}:{selectedCandidat:CandidatType}) =>
         {selectedTab === "info-candidat" ? (
          <InfoCandidat selectedCandidat={selectedCandidat}/>
         ) : (
-          <p>Tableau des paiements ici...</p>
+          <AddPaiment totalPaye={selectedCandidat.totalPaye} candidatId={selectedCandidat._id!} paiements={selectedCandidat.paiements}/>
         )}
       </div>
     </div>

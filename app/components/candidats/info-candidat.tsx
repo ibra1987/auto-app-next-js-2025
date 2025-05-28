@@ -47,12 +47,11 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
     mutationFn: async (candidat: CandidatType) => {
       return await editCandidat(candidat);
     },
-    onSuccess: () => {
+    onSuccess: async() => {
       toast.success("Candidat modifié avec succès !");
       setEdit(false);
-    queryClient.invalidateQueries({ queryKey: ["liste-candidats",auto] });
     if(selectedCandidat.auto !== updatedCandidat.auto){
-             queryClient.invalidateQueries({ queryKey: ["liste-candidats",selectedCandidat.auto] });
+            await queryClient.invalidateQueries({ queryKey: ["liste-candidats",selectedCandidat.auto] });
    
     }
 
@@ -131,7 +130,7 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
               value={updatedCandidat[id as keyof CandidatType] as string | number}
               readOnly={!edit}
               disabled={!edit}
-              className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-black outline-none" : inputClass}`}
+              className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none" : inputClass}`}
               placeholder={label}
             />
           </div>
@@ -145,7 +144,7 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
             onChange={handleChange}
             value={updatedCandidat.adresse}
             disabled={!edit}
-            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-black outline-none" : inputClass}`}
+            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none" : inputClass}`}
           >
             <option value="">-- Choisir une adresse --</option>
             {AdresseSchema.options.map((a) => (
@@ -162,7 +161,7 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
             onChange={handleChange}
             value={updatedCandidat.categorie}
             disabled={!edit}
-            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-black outline-none" : inputClass}`}
+            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none" : inputClass}`}
           >
             <option value="">-- Choisir une catégorie --</option>
             {CategorieSchema.options.map((c) => (
@@ -179,7 +178,7 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
             onChange={handleChange}
             value={updatedCandidat.auto}
             disabled={!edit}
-            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-gray-200 text-black outline-none" : inputClass}`}
+            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none" : inputClass}`}
           >
             <option value="">-- Choisir une auto-école --</option>
             {AutoecoleSchema.options.map((auto) => (
