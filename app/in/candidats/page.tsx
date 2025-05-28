@@ -1,10 +1,9 @@
 "use client"
 import { X } from "lucide-react";
-import Button from "../components/button";
-import AddCandidat from "../components/candidats/add-candidat";
+import Button from "../../components/button";
+import AddCandidat from "../../components/candidats/add-candidat";
 import { useState } from "react";
-import { CandidatType } from "@/types";
-import CandidatList from "../components/candidats/candidat-list";
+import CandidatList from "../../components/candidats/candidat-list";
 
 
 
@@ -21,7 +20,7 @@ const [showAddCandidatModal,setAddCandidatModal]=useState(false)
             {/**MODAL */}
             {showAddCandidatModal && (
 
-                <div className="w-full flex justify-center items-center min-h-screen fixed top-0 left-0 bg-black/50">
+                <div className="w-full flex justify-center items-center min-h-screen fixed z-20 top-0 left-0 bg-black/50">
                     <span onClick={()=>setAddCandidatModal(false)} className="absolute top-1/6 z-10 right-1/5 text-red-500 p-1 rounded-md border border-gray-300s hover:bg-red-500 hover:text-white">
                     <X />
                         </span>

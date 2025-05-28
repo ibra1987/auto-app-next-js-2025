@@ -11,7 +11,6 @@ export async function GET(req:NextRequest,{params}:{params:Promise<{auto:string}
 
   try {
     const {auto} =( await params) 
-  console.log(auto)
     if(!auto || inputValidtor(auto as unknown as typeof AutoecoleSchema ,AutoecoleSchema)){
         throw new Error("Veuillez selectionner une auto école.")
     }

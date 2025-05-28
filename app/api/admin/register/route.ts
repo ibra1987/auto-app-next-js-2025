@@ -2,13 +2,13 @@ import { DB_COLLECTIONS } from "@/app.config";
 import { dbClient } from "@/db/config";
 import { NewAdminSchema } from "@/types";
 import { MongoClient } from "mongodb";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 
 
 let client: MongoClient | null = null;
 
-export async function POST(req:Request){
+export async function POST(req:NextRequest){
 
       const body = await req.json()
 

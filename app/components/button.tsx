@@ -1,11 +1,11 @@
-import React from "react"
+import React, { JSX } from "react"
 
 
 
 interface ButtonProps {
     style:string,
     action?:(e:React.MouseEvent<HTMLButtonElement> | null)=>Promise<void> | void,
-    text:string,
+    text:string | JSX.Element,
     attrs?:Record<string ,any>
 }
 const Button = ({style,action,attrs,text}:ButtonProps) => {

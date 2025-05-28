@@ -21,7 +21,7 @@ export async function registerAdminAction(
     }
     const {confirmPassword,...newAdmin} =admin
     newAdmin.password = await hashPassword(newAdmin.password)
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${API_ROUTES.ADMIN}/register`,
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/register`,
         {method:"POST",
             headers:{
                 "content-type":"application/json"
