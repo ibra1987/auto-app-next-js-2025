@@ -49,7 +49,7 @@ adresse: AdresseSchema.refine(
   
     .number({ message: "Merci de renseigner le prix de la préstation." }).default(0),
     paiements:z.array(TranchesSchema).optional(),
-    totalPaye:z.string().optional()
+    totalPaye:z.number().optional()
 });
 
 export type CandidatType = z.infer<typeof CandidatSchema>;

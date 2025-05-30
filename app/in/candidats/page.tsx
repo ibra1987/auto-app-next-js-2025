@@ -20,11 +20,9 @@ const [showAddCandidatModal,setAddCandidatModal]=useState(false)
             {/**MODAL */}
             {showAddCandidatModal && (
 
-                <div className="w-full flex justify-center items-center min-h-screen fixed z-20 top-0 left-0 bg-black/50">
-                    <span onClick={()=>setAddCandidatModal(false)} className="absolute top-1/6 z-10 right-1/5 text-red-500 p-1 rounded-md border border-gray-300s hover:bg-red-500 hover:text-white">
-                    <X />
-                        </span>
-                    <AddCandidat/>
+                <div className="w-full flex justify-center items-center min-h-screen z-20 fixed top-0 left-0 bg-black/50">
+                   
+                    <AddCandidat close={setAddCandidatModal}/>
             </div>
             )}
             <CandidatList/>

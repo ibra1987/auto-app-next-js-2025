@@ -7,13 +7,20 @@ import { useAutoStore } from "@/state";
 import { toast } from "react-toastify";
 import { Settings, X } from "lucide-react";
 import { 
+  useEffect,
   useState } from "react";
 import CandidatSettings from "./candidat-settings";
+import Filters from "./filters";
 
 const CandidatList = () => {
+   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedPaiementStatus, setSelectedPaiementStatus] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const{ auto} = useAutoStore();
   const [id,setId]=useState("")
   const [showEditPannel,setEditPannel] =useState(false)
+  const [displayedCandidats, setDisplayedCandidats] = useState<CandidatType[]>([]);
+
 
   const {
     data: candidats,
@@ -36,11 +43,42 @@ const CandidatList = () => {
     retry: 0,
   });
 
+  useEffect(()=>{
+  if(candidats){
+    setDisplayedCandidats(candidats)
+  }
+  },[candidats])
   if (isLoading) return <div>Chargement...</div>;
+
+  const anyFilterSet =
+  selectedCategory || selectedPaiementStatus  || searchQuery.trim() !== "";
+
+const filteredCandidats = anyFilterSet
+  ? displayedCandidats.filter((c) => {
+      const totalPaye = c.totalPaye ?? 0;
+      const isPaid = totalPaye >=c.prix;
+
+      const matchesCategory = selectedCategory ? c.categorie === selectedCategory : true;
+      const matchesSearch =
+        searchQuery !== ""
+          ? c.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            c.cin.toLowerCase().includes(searchQuery.toLowerCase())
+          : true;
+      const matchesStatus =
+        selectedPaiementStatus === "paid"
+          ? isPaid
+          : selectedPaiementStatus === "unpaid"
+          ? !isPaid
+          : true;
+
+      return matchesCategory && matchesSearch && matchesStatus;
+    })
+  : displayedCandidats;
+ 
 
 
   //  candidat PANNEL HANDLE
-  const selectedCandidat = candidats?.find((candidat) => candidat._id === id);
+  const selectedCandidat = filteredCandidats?.find((candidat) => candidat._id === id);
   const showCandidatPannel =(id:string)=>{
       setEditPannel(true)
       setId(id)
@@ -51,17 +89,22 @@ const CandidatList = () => {
 //    return candidats.find((c)=>c._id === id)
 //   },[candidats,id]) 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm relative">
+    <div className=" flex flex-col gap-6 rounded-xl border border-gray-200 shadow-sm relative">
         {showEditPannel && selectedCandidat && (
 
                 <div className="w-full flex justify-center items-center min-h-screen fixed top-0 left-0 bg-black/50">
-                    <span onClick={()=>setEditPannel(false)} className="absolute top-4 z-10 right-1/5 text-red-500 p-1 rounded-md border border-gray-300s hover:bg-red-500 hover:text-white">
-                    <X />
-                        </span>
-                    <CandidatSettings selectedCandidat={selectedCandidat as CandidatType}/>
+                   
+                    <CandidatSettings close={setEditPannel} selectedCandidat={selectedCandidat as CandidatType}/>
             </div>
             )}
-      <table className="w-full text-sm text-left text-gray-700">
+<Filters
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        selectedPaiementStatus={selectedPaiementStatus}
+        setSelectedPaiementStatus={setSelectedPaiementStatus}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />      <table className="w-full text-sm text-left text-gray-700">
         <thead className="bg-black text-gray-300 border-b text-xs font-semibold uppercase ">
           <tr>
             <th className="px-4 py-3 text-center">Nom</th>
@@ -85,7 +128,7 @@ const CandidatList = () => {
               </td>
             </tr>
           ) : (
-            candidats?.map((candidat) => (
+            filteredCandidats?.map((candidat) => (
               <tr
                 key={candidat._id}
                 className="hover:bg-gray-50 transition-colors duration-200"
@@ -98,16 +141,16 @@ const CandidatList = () => {
                 <td className="px-4 text-center py-3">{candidat.prix} DH</td>
                  <td className="px-4 text-center py-3">
   <div className="flex flex-col items-center gap-1">
-   {candidat.prix !== parseFloat(candidat.totalPaye ?? "0") ? (
-  <span>
-    -{(candidat.prix - parseFloat(candidat.totalPaye ?? "0")).toFixed(2)} DH restant
+   {candidat.prix !== candidat.totalPaye ? (
+  <span className=" text-gray-600 text-xs">
+    -{(candidat.prix - (candidat.totalPaye ?? 0))} DH restant
   </span>
 ) : null}
     <span
-      className={`px-3 py-1 rounded-full text-sm font-semibold 
-        ${candidat.prix > parseFloat(candidat.totalPaye ?? "0")
+      className={`p-1 rounded-full text-xs font-semibold 
+        ${candidat.prix > (candidat.totalPaye  ?? 0)
           ? "bg-red-600 text-white"
-          : candidat.prix === parseFloat(candidat.totalPaye ?? "0") 
+          : candidat.prix === candidat.totalPaye 
           ? "bg-green-600 text-white"
           : "bg-gray-200 text-gray-800"}
       `}

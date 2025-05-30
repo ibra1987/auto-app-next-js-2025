@@ -46,7 +46,7 @@ export async function PUT(request: Request) {
   try {
     const candidatToUpdate = (await request.json()) as CandidatType;
 
-    const errors = inputValidtor(candidatToUpdate, CandidatSchema);
+    const errors = inputValidtor(candidatToUpdate, CandidatSchema.partial());
     if (errors) throw new Error(JSON.stringify(errors));
     client = await dbClient();
     if (!client) throw new Error("Database connection failed");
@@ -71,6 +71,7 @@ export async function PUT(request: Request) {
         data:dbQueryResult._id
       })
   } catch (error: any) {
+    console.log(error)
     return NextResponse.json({
       status: "failure",
       message: "Il exist des erreurs dans votre requete.",

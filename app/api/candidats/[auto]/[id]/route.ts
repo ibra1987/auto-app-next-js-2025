@@ -36,15 +36,3 @@ export async function GET(request:NextRequest,{params}:{params:Promise<{auto:str
 
 }
 
-// PUT
-
-export async function PUT(request:NextRequest){
-
-
-
-    try {
-        
-    } catch (error) {
-        
-    }
-}

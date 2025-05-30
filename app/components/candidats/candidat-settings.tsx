@@ -3,10 +3,10 @@
 import { useRef, useState, useEffect } from "react";
 import InfoCandidat from "./info-candidat";
 import { CandidatType } from "@/types";
-import { Contact, HandCoins } from "lucide-react";
+import { Contact, HandCoins, X } from "lucide-react";
 import AddPaiment from "../paiements/add-paiement";
 
-const CandidatSettings = ({selectedCandidat}:{selectedCandidat:CandidatType}) => {
+const CandidatSettings = ({selectedCandidat,close}:{close:(p:boolean)=>void,selectedCandidat:CandidatType}) => {
   const [selectedTab, setSelectedTab] = useState("info-candidat");
 
   const infoRef = useRef<HTMLSpanElement>(null);
@@ -23,9 +23,10 @@ const CandidatSettings = ({selectedCandidat}:{selectedCandidat:CandidatType}) =>
 
   
   return (
-    <div className="w-full max-w-4xl h-screen mx-auto bg-white p-6 rounded-xl ">
-      <div className="flex justify-start gap-4 items-center mb-4 border-b border-b-gray-200 pb-2">
-        <span
+    <div className="w-full max-w-5xl h-screen mx-auto bg-white p-4 rounded-xl overflow-scroll ">
+      <div className="flex justify-between gap-4 items-center mb-4 border-b border-b-gray-200 pb-2">
+       <div className="flex-grow flex gap-2 justify-start items-center">
+          <span
           ref={infoRef}
           tabIndex={0}
           onClick={() => setSelectedTab("info-candidat")}
@@ -49,13 +50,17 @@ const CandidatSettings = ({selectedCandidat}:{selectedCandidat:CandidatType}) =>
         >
           <HandCoins size={14}/>  <span>État du paiement</span>
         </span>
+       </div>
+         <span onClick={()=>close(false)} className=" text-red-500 p-1 rounded-md border border-gray-300s hover:bg-red-500 hover:text-white">
+                            <X />
+                                </span>
       </div>
 
       <div>
         {selectedTab === "info-candidat" ? (
          <InfoCandidat selectedCandidat={selectedCandidat}/>
         ) : (
-          <AddPaiment totalPaye={selectedCandidat.totalPaye} candidatId={selectedCandidat._id!} paiements={selectedCandidat.paiements}/>
+          <AddPaiment prix={selectedCandidat.prix} totalPaye={selectedCandidat.totalPaye} candidatId={selectedCandidat._id!} paiements={selectedCandidat.paiements}/>
         )}
       </div>
     </div>

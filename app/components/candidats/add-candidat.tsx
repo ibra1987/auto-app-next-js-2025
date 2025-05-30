@@ -7,10 +7,11 @@ import { addCandidat } from "@/app/actions/candidats";
 import { toast } from "react-toastify";
 import { inputValidtor } from "@/lib/utils";
 import { useAutoStore } from "@/state";
+import { X } from "lucide-react";
 
  export const inputClass =
     "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-black transition";
-const AddCandidat = () => {
+const AddCandidat = ({close}:{close:(p:boolean)=>void}) => {
   const queryClient = useQueryClient()
   const{ auto,setAuto} =useAutoStore()
   const [newCandidat,setNewCandidat]=useState({
@@ -90,10 +91,16 @@ const resetForm = () => {
     
   }
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
-      <h1 className="text-3xl font-bold text-black text-center mb-6">
+    <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto bg-white p-6 rounded-xl shadow-md">
+     <div className="flex justify-between items-center mb-6">
+       <h1 className="flex-grow text-3xl font-bold text-black text-center mb-6">
         Ajouter un candidat
       </h1>
+       <span onClick={()=>close(false)} className=" text-red-500 p-1 rounded-md border border-gray-300s hover:bg-red-500 hover:text-white">
+                    <X />
+                        </span>
+
+     </div>
 
       {/* Container flex row, wrap, gap entre champs */}
       <div className="flex flex-wrap gap-6">
@@ -175,11 +182,11 @@ const resetForm = () => {
       </div>
 
       {/* Bouton full width en dessous */}
-      <div className="mt-8">
+      <div className="mt-8 w-full flex justify-end">
         <Button
           text={isPending ? "Ajout en cours..." : "Ajouter le candidat"}
           
-          style={`${isPending ? " bg-gray-600 text-gray-300" : " bg-black hover:bg-gray-700 "}" w-full cursor-pointer   text-white font-semibold py-3 rounded-md transition"`}
+          style={`${isPending ? " bg-gray-600 text-gray-300" : " bg-black hover:bg-gray-700 "}" w-full md:w-1/4 cursor-pointer   text-white font-semibold py-3 rounded-md transition"`}
         
         />
       </div>

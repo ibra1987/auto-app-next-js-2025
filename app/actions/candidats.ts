@@ -105,14 +105,14 @@ export async function  getCandidat(auto:string,id:string):Promise<ActionResponse
 //EDIT CANDIDAT 
 
 
-export async function  editCandidat(candidat:CandidatType):Promise<ActionResponseType<z.ZodIssue[] | string>>{
-   try {
-    const errors =  inputValidtor(candidat,CandidatSchema)
+export async function  editCandidat(candidat:CandidatType | Partial<CandidatType>):Promise<ActionResponseType<z.ZodIssue[] | string>>{
+    console.log("candidat to edit", candidat)
+    try {
+    const errors =  inputValidtor(candidat,CandidatSchema.partial())
     if(errors){
-      
        return {
             status:"failure",
-            message:"There was an error with you request.",
+            message:errors[0].path[0].toString()|| "There was an error with you request.",
             data:errors
        }
     }

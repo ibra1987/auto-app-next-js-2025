@@ -1,11 +1,9 @@
-"use client"
+"use client";
 import {
   AdresseSchema,
   AutoecoleSchema,
-  AutoecoleType,
-  
   CandidatType,
-  CategorieSchema
+  CategorieSchema,
 } from "@/types";
 import Button from "../button";
 import { useState } from "react";
@@ -17,100 +15,146 @@ import { inputClass } from "./add-candidat";
 import { Ban, Edit, Save } from "lucide-react";
 
 const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) => {
-      const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
+  const { auto } = useAutoStore();
 
-  const [edit, setEdit] = useState(false);
-  const { setAuto ,auto} = useAutoStore();
-  const [updatedCandidat, setUpdatedCandidat] = useState<CandidatType>(selectedCandidat);
+  const [isEditing, setIsEditing] = useState(false);
+  const [updatedCandidat, setUpdatedCandidat] = useState<Partial<CandidatType>>(selectedCandidat);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-
-
     setUpdatedCandidat((prev) => ({
       ...prev,
       [name]:
-        name === "prix" && value
+        name === "prix"
           ? parseFloat(value)
           : name === "adresse"
-          ? (value as unknown as typeof AdresseSchema.Enum)
+          ? (value as unknown as (typeof AdresseSchema)["Enum"])
           : name === "categorie"
-          ? (value as unknown as typeof CategorieSchema.Enum)
+          ? (value as unknown as (typeof CategorieSchema)["Enum"])
           : name === "auto"
-          ? (value as unknown as typeof AutoecoleSchema.Enum)
+          ? (value as unknown as(typeof AutoecoleSchema)["Enum"])
           : value,
     }));
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (candidat: CandidatType) => {
-      return await editCandidat(candidat);
-    },
-    onSuccess: async() => {
-      toast.success("Candidat modifié avec succès !");
-      setEdit(false);
-    if(selectedCandidat.auto !== updatedCandidat.auto){
-            await queryClient.invalidateQueries({ queryKey: ["liste-candidats",selectedCandidat.auto] });
-   
+    mutationFn: async (candidat: Partial<CandidatType>) => {
+      const res = await editCandidat(candidat);
+      if (res.status === "failure") {
+        toast.error(res.message);
+        throw new Error(res.message);
+      }
+
+      toast.success(res.message);
+    const oldAuto = auto;
+    const newAuto = candidat.auto;
+
+    // Remove from old auto-école list
+    queryClient.setQueryData(
+      ["liste-candidats", oldAuto],
+      (oldData?: CandidatType[]) => {
+        if (!oldData) return oldData;
+        return oldData.filter(c => c._id !== candidat._id);
+      }
+    );
+
+    // Add to new auto-école list (if changed)
+    if (newAuto && newAuto !== oldAuto) {
+      queryClient.setQueryData(
+        ["liste-candidats", newAuto],
+        (oldData?: CandidatType[]) => {
+          if (!oldData) return [candidat as CandidatType];
+          return [...oldData, candidat as CandidatType];
+        }
+      );
+    } else {
+      // No change in auto-école, just update in place
+      queryClient.setQueryData(
+        ["liste-candidats", oldAuto],
+        (oldData?: CandidatType[]) => {
+          if (!oldData) return oldData;
+          return oldData.map(c =>
+            c._id === candidat._id ? { ...c, ...candidat } : c
+          );
+        }
+      );
     }
 
-
-    },
-    onError: (error) => {
-      console.error("Erreur lors de la modification du candidat:", error);
-      toast.error("Une erreur est survenue lors de la modification.");
-    },
+    // Optional: refetch both old and new if needed
+    queryClient.invalidateQueries({ queryKey: ["liste-candidats", oldAuto] });
+    if (newAuto && newAuto !== oldAuto) {
+      queryClient.invalidateQueries({ queryKey: ["liste-candidats", newAuto] });
+    }
+  },
+    
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updatedCandidat._id = selectedCandidat._id; 
-    mutate(updatedCandidat);
+const changes: Partial<CandidatType> = { _id: selectedCandidat._id };
+for (const key in updatedCandidat) {
+  if (
+    key !== "_id" &&
+    updatedCandidat[key as keyof CandidatType] !== selectedCandidat[key as keyof CandidatType]
+  ) {
+    (changes as any)[key] = updatedCandidat[key as keyof CandidatType];
+  }
+}
+    mutate(changes);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto bg-white p-6 rounded-xl">
-      <h1 className="text-3xl font-bold text-black text-center mb-6">
-        Menu de modification
-      </h1>
+    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto bg-white p-4 rounded-xl">
+      <h1 className="text-3xl font-bold text-black text-center mb-3">Menu de modification</h1>
 
-      <div className="my-4 w-full flex gap-2 justify-start items-center">
-        {edit && (
+      <div className="my-2 w-full flex gap-2 justify-start items-center">
+        {isEditing && (
           <Button
-           
             text={
-  <span className="flex items-center gap-2">
-    <Save size={14}  />
-    {isPending ? "Sauvegarde..." : "Sauvegarder"}
-  </span>
-}
+              <span className="flex items-center gap-2">
+                <Save size={14} />
+                {isPending ? "Sauvegarde..." : "Sauvegarder"}
+              </span>
+            }
             attrs={{ type: "submit" }}
-            style={`${isPending
-              ? " bg-gray-600 text-gray-300"
-              : " bg-black hover:bg-gray-700"
-              } text-sm px-4 py-1 cursor-pointer text-white font-semibold rounded transition`}
+            style={`${
+              isPending ? "bg-gray-600 text-gray-300" : "bg-black hover:bg-gray-700"
+            } text-sm px-4 py-1 cursor-pointer text-white font-semibold rounded transition`}
           />
         )}
+
         <Button
           attrs={{ type: "button" }}
           action={(e) => {
             e?.preventDefault();
-            setEdit(true);
+            setIsEditing(true);
           }}
-          text={<span className="flex items-center gap-2"><Edit size={14}/> Modifier</span>}
-          style={`bg-green-800 hover:bg-green-700 text-sm px-4 py-1 cursor-pointer text-white font-semibold rounded transition`}
+          text={
+            <span className="flex items-center gap-2">
+              <Edit size={14} /> Modifier
+            </span>
+          }
+          style="bg-green-800 hover:bg-green-700 text-sm px-4 py-1 cursor-pointer text-white font-semibold rounded transition"
         />
-        <Button
-          attrs={{ type: "button" }}
-          action={(e) => {
-            e?.preventDefault();
-            setUpdatedCandidat(selectedCandidat);
-            setEdit(false);
-          }}
-          text={<span className="flex items-center gap-2"><Ban size={14}/> Annuler</span>}
-          style={`bg-gray-600 hover:bg-gray-700 text-sm px-4 py-1 cursor-pointer text-white font-semibold rounded transition`}
-        />
+
+        {isEditing && (
+          <Button
+            attrs={{ type: "button" }}
+            action={(e) => {
+              e?.preventDefault();
+              setUpdatedCandidat(selectedCandidat);
+              setIsEditing(false);
+            }}
+            text={
+              <span className="flex items-center gap-2">
+                <Ban size={14} /> Annuler
+              </span>
+            }
+            style="bg-gray-600 hover:bg-gray-700 text-sm px-4 py-1 cursor-pointer text-white font-semibold rounded transition"
+          />
+        )}
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -121,16 +165,22 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
           { id: "prix", label: "Prix du service", type: "number" },
         ].map(({ id, label, type }) => (
           <div className="flex-grow basis-[48%]" key={id}>
-            <label htmlFor={id} className="block mb-1 font-semibold text-sm text-gray-700">{label}</label>
+            <label htmlFor={id} className="block mb-1 font-semibold text-sm text-gray-700">
+              {label}
+            </label>
             <input
               id={id}
               name={id}
               type={type}
               onChange={handleChange}
-              value={updatedCandidat[id as keyof CandidatType] as string | number}
-              readOnly={!edit}
-              disabled={!edit}
-              className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none" : inputClass}`}
+              value={updatedCandidat[id as keyof CandidatType] as string | number ?? ""}
+              readOnly={!isEditing}
+              disabled={!isEditing}
+              className={`${
+                !isEditing
+                  ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none"
+                  : inputClass
+              }`}
               placeholder={label}
             />
           </div>
@@ -142,9 +192,13 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
             id="adresse"
             name="adresse"
             onChange={handleChange}
-            value={updatedCandidat.adresse}
-            disabled={!edit}
-            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none" : inputClass}`}
+            value={updatedCandidat.adresse ?? ""}
+            disabled={!isEditing}
+            className={`${
+              !isEditing
+                ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none"
+                : inputClass
+            }`}
           >
             <option value="">-- Choisir une adresse --</option>
             {AdresseSchema.options.map((a) => (
@@ -159,9 +213,13 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
             id="categorie"
             name="categorie"
             onChange={handleChange}
-            value={updatedCandidat.categorie}
-            disabled={!edit}
-            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none" : inputClass}`}
+            value={updatedCandidat.categorie ?? ""}
+            disabled={!isEditing}
+            className={`${
+              !isEditing
+                ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none"
+                : inputClass
+            }`}
           >
             <option value="">-- Choisir une catégorie --</option>
             {CategorieSchema.options.map((c) => (
@@ -176,9 +234,13 @@ const InfoCandidat = ({ selectedCandidat }: { selectedCandidat: CandidatType }) 
             id="auto"
             name="auto"
             onChange={handleChange}
-            value={updatedCandidat.auto}
-            disabled={!edit}
-            className={`${!edit ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none" : inputClass}`}
+            value={updatedCandidat.auto ?? ""}
+            disabled={!isEditing}
+            className={`${
+              !isEditing
+                ? "w-full p-3 border border-gray-300 rounded-md shadow-sm bg-black text-gray-300 outline-none"
+                : inputClass
+            }`}
           >
             <option value="">-- Choisir une auto-école --</option>
             {AutoecoleSchema.options.map((auto) => (
