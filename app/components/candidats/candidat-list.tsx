@@ -42,7 +42,7 @@ const CandidatList = () => {
     refetchOnWindowFocus: false,
     retry: 0,
   });
-
+console.log(candidats)
   useEffect(()=>{
   if(candidats){
     setDisplayedCandidats(candidats)
@@ -89,7 +89,7 @@ const filteredCandidats = anyFilterSet
 //    return candidats.find((c)=>c._id === id)
 //   },[candidats,id]) 
   return (
-    <div className=" flex flex-col gap-6 rounded-xl border border-gray-200 shadow-sm relative">
+    <div className="w-full flex flex-col gap-6 rounded-xl  shadow-sm relative">
         {showEditPannel && selectedCandidat && (
 
                 <div className="w-full flex justify-center items-center min-h-screen fixed top-0 left-0 bg-black/50">
@@ -104,9 +104,9 @@ const filteredCandidats = anyFilterSet
         setSelectedPaiementStatus={setSelectedPaiementStatus}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-      />      <table className="w-full text-sm text-left text-gray-700">
-        <thead className="bg-black text-gray-300 border-b text-xs font-semibold uppercase ">
-          <tr>
+      />      <table className="w-full text-sm text-left border  border-gray-700 ">
+        <thead className=" border-b border-b-gray-800 bg-gray-900 text-xs font-semibold uppercase ">
+          <tr className="rounded-xl">
             <th className="px-4 py-3 text-center">Nom</th>
             <th className="px-4 py-3 text-center">CIN</th>
             <th className="px-4 py-3 text-center">Adresse</th>
@@ -120,7 +120,7 @@ const filteredCandidats = anyFilterSet
 
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody className="divide-y divide-gray-700">
           {!candidats || candidats?.length === 0 ? (
             <tr>
               <td colSpan={6} className="px-4 py-6 text-center text-gray-500">
@@ -131,7 +131,7 @@ const filteredCandidats = anyFilterSet
             filteredCandidats?.map((candidat) => (
               <tr
                 key={candidat._id}
-                className="hover:bg-gray-50 transition-colors duration-200"
+                className="hover:bg-gray-800 transition-colors duration-200"
               >
                 <td className="px-4 text-center py-3">{candidat.nom}</td>
                 <td className="px-4 text-center py-3">{candidat.cin}</td>

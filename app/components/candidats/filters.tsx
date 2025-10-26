@@ -35,11 +35,11 @@ const Filters = ({
         }
     }
   return (
-    <div className="w-full flex justify-start items-center gap-4 p-4 bg-white rounded-lg shadow-md">
+    <div className="w-full flex justify-start items-center gap-4 p-4 bg-zinc-900 rounded-lg shadow-md">
         <h2 className="text-lg font-semibold text-gray-800">Filtres:</h2>
-       <div className="flex  gap-2">
+       <div className="flex flex-1 justify-around  gap-2">
             <div className="flex justify-center items-center gap-2">
-            <label htmlFor="search" className="text-sm text-gray-600">
+            <label htmlFor="search" className="text-sm text-gray-300">
             Rechercher par nom ou CIN
             </label>
             <input
@@ -53,7 +53,7 @@ const Filters = ({
             />
         </div>
         <div className="flex justify-center items-center gap-2">
-            <label htmlFor="category" className="text-sm text-gray-600">
+            <label htmlFor="category" className="text-sm text-gray-300">
             Filtrer par catégorie
             </label>
             <select
@@ -72,7 +72,7 @@ const Filters = ({
             </select>
         </div>
         <div className="flex justify-center items-center gap-2">
-            <label htmlFor="status" className="text-sm text-gray-600">
+            <label htmlFor="status" className="text-sm text-gray-300">
             Filtrer par statut de paiement
             </label>
             <select

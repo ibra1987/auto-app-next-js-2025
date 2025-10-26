@@ -15,9 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     
-      <div className="w-full min-h-screen flex justify-center items-start">
+      <div className=" bg-inherit w-full min-h-screen flex justify-center items-start">
         <Sidebar/>
-         <div className=" w-full flex-grow flex flex-col justify-start items-start">
+         <div className=" w-full flex flex-col justify-start items-start">
              {children}
          </div>
       </div>

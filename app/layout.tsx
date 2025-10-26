@@ -13,8 +13,8 @@ export default function RootLayout({
         className={` antialiased`}
       >
     <ReactQueryProvider >
-      <div className="w-full min-h-screen flex justify-center items-start">
-         <div className="w-full flex-grow flex flex-col justify-start items-start">
+      <div className="w-full bg-gray-950 text-gray-100  min-h-screen flex justify-center items-start">
+         <div className="w-full flex  flex-col justify-start items-start">
              {children}
          </div>
       </div>

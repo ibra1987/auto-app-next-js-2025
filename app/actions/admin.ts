@@ -39,6 +39,7 @@ export async function registerAdminAction(
     }
     return await response.json()
   } catch (error) {
+    console.log(error)
     return {
         status:"failure",
       
